@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ExtensionManifest ExtensionBundleId="com.my.test" ExtensionBundleVersion="1.0.0" Version="7.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ExtensionList>
+		<Extension Id="com.my.test.panel" Version="0.0.1" />
+	</ExtensionList>
+	<ExecutionEnvironment>
+		<HostList>
+			<Host Name="PHXS" Version="[20.0,99.9]"/>
+      			<Host Name="PHSP" Version="[20.0,99.9]"/>
+		</HostList>
+		<LocaleList>
+			<Locale Code="All" />
+		</LocaleList>
+		<RequiredRuntimeList>
+			<RequiredRuntime Name="CSXS" Version="7.0" />
+		</RequiredRuntimeList>
+	</ExecutionEnvironment>
+	<DispatchInfoList>
+		<Extension Id="com.my.test.panel">
+			<DispatchInfo>
+			<Resources>
+				<MainPath>./client/index.html</MainPath>
+				<ScriptPath>./host/index.jsx</ScriptPath>
+				<CEFCommandLine>
+					<Parameter>--disable-auto-reload</Parameter>
+				</CEFCommandLine>
+			</Resources>
+			<Lifecycle>
+				<AutoVisible>true</AutoVisible>
+			</Lifecycle>
+				<UI>
+					<Type>Panel</Type>
+					<Menu>[BIRDO] Fechamentos</Menu>
+					<Geometry>
+						<Size>
+							<Height>275</Height>
+							<Width>350</Width>
+						</Size>
+					</Geometry>
+					<Icons />
+				</UI>
+			</DispatchInfo>
+		</Extension>
+	</DispatchInfoList>
+</ExtensionManifest>
+

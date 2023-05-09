@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Exportar Fechamentos</title>
+	<style>
+		label {
+			color: #A9A9A9;
+			font-family: "Calibri";
+			font-size: 13px;
+		}
+		legend {
+			color: #A9A9A9;
+			font-family: "Calibri";
+			font-size: 13px;
+		}
+		fieldset {
+			border: 2px ridge #696969;
+		}
+		p {
+			color: #A9A9A9;
+			font-family: "Calibri";
+			font-size: 11px;
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			margin: 10px;
+		}
+	</style>
+</head>
+<body>
+	<fieldset id="mainFieldSet">
+		<legend> Fechamentos </legend>
+	</fieldset>
+	<p>ver. 0.0.1</p>
+	<script type="text/javascript" src="CSInterface.js"></script>
+	<script type="text/javascript" src="sketch.js"></script>
+	<script type="text/javascript">
+
+		renderDataInTheTable();
+		function renderDataInTheTable() {
+			getScenes();
+		}
+
+	</script>
+</body>
+</html>
