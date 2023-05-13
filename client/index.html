@@ -26,12 +26,73 @@
 			right: 0;
 			margin: 10px;
 		}
+		.text-center {
+  			text-align: center;
+		}
+		#list-container {
+			height: 200px;
+			overflow-y: scroll;
+			background-color: #898585;
+			float: left;
+			width: 70%;
+		}
+		#margin-panel {
+			float: right;
+			width: 30%;
+			height: 200px;
+			padding: 10px;
+			box-sizing: border-box;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+		}
+		.margin-label {
+			display: block;
+			font-weight: bold;
+			margin-bottom: 5px;
+		}
+		.margin-input {
+			width: 100%;
+			padding: 5px;
+			box-sizing: border-box;
+		}
+		.margin-input:focus {
+			outline: none;
+		}
+		/* Only allow digits in the margin input */
+		.margin-input::-webkit-outer-spin-button,
+		.margin-input::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+		.margin-input[type=number] {
+			-moz-appearance: textfield;
+		}
+		.list-item {
+			padding: 5px;
+			margin: 5px;
+			background-color: #eee;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+		}
+		.list-item button {
+			margin-left: 10px;
+		}
 	</style>
 </head>
 <body>
-	<fieldset id="mainFieldSet">
-		<legend> Fechamentos </legend>
-	</fieldset>
+	<div>
+		<div id="list-container">
+			<!-- Add more items as needed -->
+		</div>
+		<div id="margin-panel">
+			<label class="margin-label" for="margin-input">Margin:</label>
+			<input class="margin-input" type="number" id="margin-input" name="margin-input" min="0" step="1" value="100">
+		</div>
+	</div>
+	<div class="text-center">
+		<button type="submit" id = "executeBtn">Execute</button>
+	</div>
+
 	<p>ver. 0.0.1</p>
 	<script type="text/javascript" src="CSInterface.js"></script>
 	<script type="text/javascript" src="sketch.js"></script>

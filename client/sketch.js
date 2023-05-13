@@ -4,34 +4,89 @@ var clearButtonElm = document.getElementById("executeBtn");
 clearButtonElm.addEventListener("click", executeCallback);
 
 function executeCallback(){
-	
-	var episode = "";
-	var hostCall = "execute(" + episode +")";
-	csInterface.evalScript(hostCall);
 
+	let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+	let scenes = "";
+	let margin = document.getElementById("margin-input").value;
+	checkboxes.forEach(checkbox =>{
+
+		if(checkbox.checked){
+			scenes += checkbox.name + ",";
+		}
+
+	});
+	var hostCall = "execute(\"" + scenes + "\"," + margin + ")";
+	alert(hostCall);
+	csInterface.evalScript(hostCall,function(output){
+
+		alert(output);
+
+	});
+
+}
+
+function getArtLayers(layerSetName){
+
+	var hostCall = "isLayerEmpty(\"" + layerSetName + "\")";
+	var label;
+	var content = "";
+	var color = "red";
+	csInterface.evalScript(hostCall,function(result){
+
+		label = document.getElementById("label" + layerSetName);
+		if(result === "true"){
+			content += "Layer esta vazio;"
+		}
+
+		if(!checkSceneName(layerSetName)){
+			content += "Nomenclatura esta incorreta"
+		}
+
+		if(content.length == 0){
+			content = "Layer ok";
+			color = "green";
+		}
+
+		label.innerHTML = " " + content;
+		label.style="color:" + color;
+
+
+	});
+}
+
+function checkSceneName(scene_name){
+	return /(sc|SC)\d{4}$/.test(scene_name);
 }
 
 function getScenes(){
 
-	var hostCall = "getScenesNames(\"CENAS\")";
+	let hostCall = "getScenesNames('CENAS')";
 	csInterface.evalScript(hostCall,function(result){
+
 		var scenes = result.split(",");
-		alert(typeof scenes);
-		const fieldSet = document.getElementById("mainFieldSet");
+		const container = document.getElementById("list-container");
+		let div;
+		let item;
+		let label;
+		let status;
 		scenes.forEach(todo => {
-			let newForm = document.createElement("form");
-			let text = document.createElement("input");
-			text.type = "text";
-			text.id = "text" + todo;
-			text.value = "0000";
-			text.size = "6";
-			newForm.appendChild(text);
-			let btn = document.createElement("input");
-			btn.type = "submit";
-			btn.id = "executeBtn" + todo;
-			btn.value = "fill" + todo;
-			newForm.appendChild(btn);
-			fieldSet.appendChild(newForm);
+
+			item = document.createElement("input");
+			item.type = "checkbox";
+			item.name = todo;
+			label = document.createElement("label");
+			label.for = todo;
+			label.innerHTML = todo;
+			status = document.createElement("span");
+			status.id = "label" + todo;
+			status.innerHTML = " Waiting...";
+
+			div = document.createElement("div");
+			div.appendChild(item);
+			div.appendChild(label);
+			div.appendChild(status);
+			container.appendChild(div);
+			getArtLayers(todo);
 		});
 	});
 
