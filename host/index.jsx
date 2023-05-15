@@ -188,8 +188,8 @@ function makedirs(folderString){
 
 //TODO: ask for real paths.
 function getOutputPaths(episode){
-	var root = "//192.168.10.100/projects/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
-	//var root = "X:/output/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
+	//var root = "//192.168.10.100/projects/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
+	var root = "X:/output/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
 	closeup_comp = root + "02_COMP/"
 	closeup_proxy = root + "01_PRE_COMP/"
 	return [closeup_comp,closeup_proxy];
@@ -201,12 +201,12 @@ function pad(num, size) {
     return num;
 }
 
-function getVersion(basename,saveAt){
+function getVersion(basename,saveAt,format){
 	var f = new Folder(saveAt);
-	var files = f.getFiles (/(psd|psb)$/);//returns file object list
+	var files = f.getFiles (/(psd|psb|png)$/);//returns file object list
 	var version = 1;
 	for(var i = 0;i < files.length;i++){
-		if(files[i].name.indexOf(basename) != -1){
+		if(files[i].name.indexOf(basename) != -1 && files[i].name.indexOf(format) != -1){
             version++;
 		}
 	}
@@ -215,7 +215,7 @@ function getVersion(basename,saveAt){
 
 function generateCloseupName(projCode,episode,scene,saveAt,format){
  	var basename = projCode + "_" + episode + "_" + scene;//LEB_EP000_SC0000 
-	return basename + "_" + getVersion(basename,saveAt) + format;//LEB_EPXXX_SCXXXX_vXX.psd
+	return basename + "_" + getVersion(basename,saveAt,format) + format;//LEB_EPXXX_SCXXXX_vXX.psd
 }
 
 function isLayerEmpty(layer_name){
