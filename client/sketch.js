@@ -16,7 +16,6 @@ function executeCallback(){
 
 	});
 	var hostCall = "execute(\"" + scenes + "\"," + margin + ")";
-	alert(hostCall);
 	csInterface.evalScript(hostCall,function(output){
 
 		alert(output);
