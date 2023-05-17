@@ -41,6 +41,68 @@ function saveAs(file,options,asCopy,extension){
 	activeDocument.saveAs(file,options,asCopy,extension); 
 }
 
+// Check the operating system
+function checkOperatingSystem() {
+	if ($.os.indexOf("Windows") !== -1) {
+		return "Windows";
+	} else if ($.os.indexOf("Macintosh") !== -1) {
+		return "macOS";
+	} else {
+		return "Unknown";
+	}
+}
+
+function getExecutable(){
+
+	var photoshopExe = null;
+	var os = checkOperatingSystem();
+	if(os == "Windows"){
+		photoshopExe = new File(app.path + "/Photoshop.exe");
+	}
+	else if(os == "macOS"){
+		photoshopExe = new File(app.path + "/Adobe Photoshop.app");
+	}
+
+	return photoshopExe;
+}
+
+// Get the Photoshop installation path
+function getPhotoshopInstallationPath() {
+	try {
+		// Create a new File object pointing to the Photoshop executable
+		var photoshopPath = new File(app.path);
+		// Return the path of the installation folder
+		return photoshopPath.fsName;
+	} catch (error) {
+		return null;
+	}
+}
+  
+// Load and run the "Delete All Empty Layers.jsx" script
+function deleteAllEmptyLayers() {
+	var status = true;
+	try {
+		var scriptFile = new File(getPhotoshopInstallationPath() +"/Presets/Scripts/Delete All Empty Layers.jsx");
+		app.load(scriptFile);
+	} catch (error) {
+		status = "Error loading script:" + error;
+	}
+	return status;
+}
+
+function getLayerSet(name){
+
+	var layerSet;
+	try{
+		layerSet = activeDocument.layerSets.getByName(name);
+	}
+	catch(e){
+		layerSet = null;
+	}
+
+	return layerSet;
+}
+
 function getScenes(root){
  
 	var scenes = [];
@@ -188,8 +250,8 @@ function makedirs(folderString){
 
 //TODO: ask for real paths.
 function getOutputPaths(episode){
-	var root = "//192.168.10.100/projects/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
-	//var root = "X:/output/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
+	//var root = "//192.168.10.100/projects/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
+	var root = "X:/output/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
 	closeup_comp = root + "02_COMP/"
 	closeup_proxy = root + "01_PRE_COMP/"
 	return [closeup_comp,closeup_proxy];
@@ -233,21 +295,44 @@ function getEpisode(s) {
 	return arr == null ? null : arr[0]; 
 }
 
+function deleteOtherGuides(scene_name){
+
+	var guide = getLayerSet("GUIDE");
+	if(guide == null){
+		return false;
+	}
+
+	var layers = guide.layers;
+	for(var i=0;i < layers.length;i++){
+
+		if(layers[i].name.indexOf(scene_name) == -1){
+			layers[i].remove();
+		}
+
+	}
+
+}
+
 function execute(scenes_to_close,margin){
 
 	var episode = getEpisode(getFilename());
 	if(episode == null){
 		return "ERROR: episode not found";
 	}
-	var savedState = activeDocument.activeHistoryState;
+	var originalState = activeDocument.activeHistoryState;
 	var scenes = getScenes("CENAS");
 	var saveFile = null;
+	
+	deleteAllEmptyLayers();
+	var currentState = activeDocument.activeHistoryState;
 	for(var i=0;i<scenes.length;i++){
 
 		//if scene is not checked in the interface,ignore it.
 		if(scenes_to_close.indexOf(scenes[i].name) == -1){
 			continue;
 		}
+
+		deleteOtherGuides(scenes[i].name);
 
 		//remove other layers from the file about to be saved.
 		for(j = 0;j<scenes.length;j++){
@@ -264,9 +349,10 @@ function execute(scenes_to_close,margin){
 		resize(Math.ceil(0.25*getWidth()),Math.ceil(0.25*getHeight()));
 		SavePSD(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".psd"));
 		SavePNG(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".png"));
-		activeDocument.activeHistoryState = savedState;
+		activeDocument.activeHistoryState = currentState;
 		scenes = getScenes("CENAS");
 	}
 
+	activeDocument.activeHistoryState = originalState;
 	return "Fechamentos criados com sucesso!";
 }
