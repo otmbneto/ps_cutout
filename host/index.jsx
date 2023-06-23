@@ -12,12 +12,17 @@
 #############################################################################*/
 
 //convinience functions for debbuging purposes.
+
+String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
+
 function getFilename(){
-	return activeDocument.name;
+	return String(activeDocument.name);
 }
 
 function getFullpath(){
-	return activeDocument.fullName;
+	return String(activeDocument.fullName);
 }
 
 function getWidth(){
@@ -180,6 +185,31 @@ function SavePSD(saveFile){
 	saveAs(saveFile, psdSaveOptions, true, Extension.LOWERCASE);   
 	
 }
+
+function SavePSB(saveFile) { 
+
+	var desc1 = new ActionDescriptor(); 
+	var desc2 = new ActionDescriptor(); 
+	desc2.putBoolean( stringIDToTypeID('maximizeCompatibility'), true ); 
+	desc1.putObject( charIDToTypeID('As  '), charIDToTypeID('Pht8'), desc2 ); 
+	desc1.putPath( charIDToTypeID('In  '), new File(saveFile) ); 
+	desc1.putBoolean( charIDToTypeID('LwCs'), true );
+	makedirs(saveFile.substring(0, saveFile.lastIndexOf('/')));
+	executeAction( charIDToTypeID('save'), desc1, DialogModes.NO ); 
+
+};
+
+function saveDocument(saveFile){
+
+	if(getFullpath().endsWith(".psd")){
+		SavePSD(String(saveFile));
+	}
+	else if(getFullpath().endsWith(".psb")){
+		SavePSB(String(saveFile));
+	}
+
+}
+
 
 //function stole from camelo003 to pad string.
 function formatPad(num, base){
@@ -344,10 +374,10 @@ function execute(scenes_to_close,margin){
 
 		createCloseUp(scenes[i],margin);
 		saveFile = getOutputPaths(episode);
-		SavePSD(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],".psd"));
+		saveDocument(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],".psd"));
 		SavePNG(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],".png"));
 		resize(Math.ceil(0.25*getWidth()),Math.ceil(0.25*getHeight()));
-		SavePSD(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".psd"));
+		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".psd"));
 		SavePNG(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".png"));
 		activeDocument.activeHistoryState = currentState;
 		scenes = getScenes("CENAS");
