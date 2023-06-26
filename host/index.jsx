@@ -17,6 +17,20 @@ String.prototype.endsWith = function(suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
+String.prototype.contains = function(substring){
+	return this.indexOf(substring) !== -1;
+};
+
+/*
+String.prototype.dirname = function() {
+    return this.substring(0, this.lastIndexOf("/") +1);
+};
+
+String.prototype.basename = function() {
+    return this.substring(this.lastIndexOf("/")+1,this.length);
+};
+*/
+
 function getFilename(){
 	return String(activeDocument.name);
 }
@@ -201,12 +215,21 @@ function SavePSB(saveFile) {
 
 function saveDocument(saveFile){
 
+	var filename = saveFile.substring(saveFile.lastIndexOf("/")+1,saveFile.length);
+	var local_folder = getFullpath().substring(0, getFullpath().lastIndexOf('/')) + "/PUBLISH/";
+	var local_save = local_folder + filename;
+	//makedirs(local_folder);
+
 	if(getFullpath().endsWith(".psd")){
-		SavePSD(String(saveFile));
+		SavePSD(local_save);
 	}
 	else if(getFullpath().endsWith(".psb")){
-		SavePSB(String(saveFile));
+		SavePSB(local_save);
 	}
+
+	local_save = new File(local_save);
+	makedirs(saveFile.substring(0, saveFile.lastIndexOf('/')));//create the server folder
+	local_save.copy(saveFile);
 
 }
 
