@@ -213,18 +213,21 @@ function SavePSB(saveFile) {
 
 };
 
-function saveDocument(saveFile){
+function saveDocument(saveFile,local_folder){
 
 	var filename = saveFile.substring(saveFile.lastIndexOf("/")+1,saveFile.length);
-	var local_folder = getFullpath().substring(0, getFullpath().lastIndexOf('/')) + "/PUBLISH/";
+	//var local_folder = getFullpath().substring(0, getFullpath().lastIndexOf('/')) + "/PUBLISH/";
 	var local_save = local_folder + filename;
 	//makedirs(local_folder);
 
-	if(getFullpath().endsWith(".psd")){
+	if(saveFile.endsWith(".psd")){
 		SavePSD(local_save);
 	}
-	else if(getFullpath().endsWith(".psb")){
+	else if(saveFile.endsWith(".psb")){
 		SavePSB(local_save);
+	}
+	else if(saveFile.endsWith(".png")){
+		SavePNG(local_save);
 	}
 
 	local_save = new File(local_save);
@@ -303,8 +306,8 @@ function makedirs(folderString){
 
 //TODO: ask for real paths.
 function getOutputPaths(episode){
-	var root = "//192.168.10.100/projects/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
-	//var root = "X:/output/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
+	//var root = "//192.168.10.100/projects/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
+	var root = "X:/output/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
 	closeup_comp = root + "02_COMP/"
 	closeup_proxy = root + "01_PRE_COMP/"
 	return [closeup_comp,closeup_proxy];
@@ -366,6 +369,10 @@ function deleteOtherGuides(scene_name){
 
 }
 
+function getPSFormat(){
+	return getFilename().match(/\.[0-9a-z]+$/i)[0];
+}
+
 function execute(scenes_to_close,margin){
 
 	var episode = getEpisode(getFilename());
@@ -375,7 +382,8 @@ function execute(scenes_to_close,margin){
 	var originalState = activeDocument.activeHistoryState;
 	var scenes = getScenes("CENAS");
 	var saveFile = null;
-	
+	var local_folder = getFullpath().substring(0, getFullpath().lastIndexOf('/')) + "/PUBLISH/";
+
 	deleteAllEmptyLayers();
 	var currentState = activeDocument.activeHistoryState;
 	for(var i=0;i<scenes.length;i++){
@@ -397,11 +405,12 @@ function execute(scenes_to_close,margin){
 
 		createCloseUp(scenes[i],margin);
 		saveFile = getOutputPaths(episode);
-		saveDocument(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],".psd"));
-		SavePNG(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],".png"));
+		saveDocument(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],getPSFormat()),local_folder + "02_COMP/");
+		saveDocument(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],".png"),local_folder + "02_COMP/");
+		
 		resize(Math.ceil(0.25*getWidth()),Math.ceil(0.25*getHeight()));
-		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".psd"));
-		SavePNG(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".png"));
+		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".psd"),local_folder + "01_PRE_COMP/");
+		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".png"),local_folder + "01_PRE_COMP/");
 		activeDocument.activeHistoryState = currentState;
 		scenes = getScenes("CENAS");
 	}
