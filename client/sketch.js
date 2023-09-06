@@ -15,7 +15,7 @@ function executeCallback(){
 		}
 
 	});
-	var hostCall = "execute(\"" + scenes + "\"," + margin + ")";
+	var hostCall = "supervised_execution(\"" + scenes + "\"," + margin + ")";
 	csInterface.evalScript(hostCall,function(output){
 
 		alert(output);
@@ -51,6 +51,12 @@ function getArtLayers(layerSetName){
 
 
 	});
+}
+
+function HelloWorld(){
+
+	alert("OIII MUNDO");
+
 }
 
 function checkSceneName(scene_name){

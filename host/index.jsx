@@ -373,6 +373,24 @@ function getPSFormat(){
 	return getFilename().match(/\.[0-9a-z]+$/i)[0];
 }
 
+function supervised_execution(scenes_to_close,margin){
+
+	var result;
+	try{
+		
+		result += execute(scenes_to_close,margin);
+
+	}
+	catch(e){
+
+		result = e + "at line " + e.line;
+
+	}
+
+	return result;
+
+}
+
 function execute(scenes_to_close,margin){
 
 	var episode = getEpisode(getFilename());
