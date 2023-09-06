@@ -377,13 +377,13 @@ function supervised_execution(scenes_to_close,margin){
 
 	var result;
 	try{
-		
-		result += execute(scenes_to_close,margin);
+
+		result = execute(scenes_to_close,margin);
 
 	}
 	catch(e){
 
-		result = e + "at line " + e.line;
+		result = e + " at line " + e.line;
 
 	}
 
@@ -401,6 +401,9 @@ function execute(scenes_to_close,margin){
 	var scenes = getScenes("CENAS");
 	var saveFile = null;
 	var local_folder = getFullpath().substring(0, getFullpath().lastIndexOf('/')) + "/PUBLISH/";
+
+	var originalUnit = app.preferences.rulerUnits;
+	app.preferences.rulerUnits = Units.PIXELS;
 
 	deleteAllEmptyLayers();
 	var currentState = activeDocument.activeHistoryState;
@@ -434,5 +437,6 @@ function execute(scenes_to_close,margin){
 	}
 
 	activeDocument.activeHistoryState = originalState;
+	app.preferences.rulerUnits = originalUnit;//just to be sure
 	return "Fechamentos criados com sucesso!";
 }
