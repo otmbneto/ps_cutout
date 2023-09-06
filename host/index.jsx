@@ -202,13 +202,16 @@ function SavePSD(saveFile){
 
 function SavePSB(saveFile) { 
 
+	var saveFileObj = new File(saveFile);
+	var osSpecificFilePath = saveFileObj.fsName;
+
 	var desc1 = new ActionDescriptor(); 
 	var desc2 = new ActionDescriptor(); 
 	desc2.putBoolean( stringIDToTypeID('maximizeCompatibility'), true ); 
 	desc1.putObject( charIDToTypeID('As  '), charIDToTypeID('Pht8'), desc2 ); 
-	desc1.putPath( charIDToTypeID('In  '), new File(saveFile) ); 
+	desc1.putPath( charIDToTypeID('In  '), new File(osSpecificFilePath) ); 
 	desc1.putBoolean( charIDToTypeID('LwCs'), true );
-	makedirs(saveFile.substring(0, saveFile.lastIndexOf('/')));
+	makedirs(osSpecificFilePath.substring(0, osSpecificFilePath.lastIndexOf('/')));
 	executeAction( charIDToTypeID('save'), desc1, DialogModes.NO ); 
 
 };
