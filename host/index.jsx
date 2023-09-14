@@ -204,14 +204,14 @@ function SavePSB(saveFile) {
 
 	var saveFileObj = new File(saveFile);
 	var osSpecificFilePath = saveFileObj.fsName;
-
+	
 	var desc1 = new ActionDescriptor(); 
 	var desc2 = new ActionDescriptor(); 
 	desc2.putBoolean( stringIDToTypeID('maximizeCompatibility'), true ); 
 	desc1.putObject( charIDToTypeID('As  '), charIDToTypeID('Pht8'), desc2 ); 
 	desc1.putPath( charIDToTypeID('In  '), new File(osSpecificFilePath) ); 
 	desc1.putBoolean( charIDToTypeID('LwCs'), true );
-	makedirs(osSpecificFilePath.substring(0, osSpecificFilePath.lastIndexOf('/')));
+	makedirs(osSpecificFilePath.substring(0, osSpecificFilePath.lastIndexOf('\\')));
 	executeAction( charIDToTypeID('save'), desc1, DialogModes.NO ); 
 
 };
@@ -309,11 +309,13 @@ function makedirs(folderString){
 
 //TODO: ask for real paths.
 function getOutputPaths(episode){
+
 	var root = "//192.168.10.100/projects/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
 	//var root = "X:/output/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
 	closeup_comp = root + "02_COMP/"
 	closeup_proxy = root + "01_PRE_COMP/"
 	return [closeup_comp,closeup_proxy];
+	
 }
 
 function pad(num, size) {
