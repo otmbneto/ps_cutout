@@ -8,6 +8,7 @@ function executeCallback(){
 	let checkboxes = document.querySelectorAll('input[type="checkbox"]');
 	let scenes = "";
 	let margin = document.getElementById("margin-input").value;
+	let sendToServer = document.getElementById("server").checked;
 	checkboxes.forEach(checkbox =>{
 
 		if(checkbox.checked){
@@ -15,7 +16,7 @@ function executeCallback(){
 		}
 
 	});
-	var hostCall = "supervised_execution(\"" + scenes + "\"," + margin + ")";
+	var hostCall = "supervised_execution(\"" + scenes + "\"," + margin + "," + sendToServer + ")";
 	csInterface.evalScript(hostCall,function(output){
 
 		alert(output);

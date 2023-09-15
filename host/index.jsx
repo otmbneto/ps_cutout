@@ -216,12 +216,10 @@ function SavePSB(saveFile) {
 
 };
 
-function saveDocument(saveFile,local_folder){
+function saveDocument(saveFile,local_folder,sendToServer){
 
 	var filename = saveFile.substring(saveFile.lastIndexOf("/")+1,saveFile.length);
-	//var local_folder = getFullpath().substring(0, getFullpath().lastIndexOf('/')) + "/PUBLISH/";
 	var local_save = local_folder + filename;
-	//makedirs(local_folder);
 
 	if(saveFile.endsWith(".psd")){
 		SavePSD(local_save);
@@ -235,7 +233,10 @@ function saveDocument(saveFile,local_folder){
 
 	local_save = new File(local_save);
 	makedirs(saveFile.substring(0, saveFile.lastIndexOf('/')));//create the server folder
-	local_save.copy(saveFile);
+	
+	if(sendToServer){
+		local_save.copy(saveFile);
+	}
 
 }
 
@@ -310,8 +311,8 @@ function makedirs(folderString){
 //TODO: ask for real paths.
 function getOutputPaths(episode){
 
-	var root = "//192.168.10.100/projects/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
-	//var root = "X:/output/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
+	//var root = "//192.168.10.100/projects/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
+	var root = "X:/output/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
 	closeup_comp = root + "02_COMP/"
 	closeup_proxy = root + "01_PRE_COMP/"
 	return [closeup_comp,closeup_proxy];
@@ -378,12 +379,12 @@ function getPSFormat(){
 	return getFilename().match(/\.[0-9a-z]+$/i)[0];
 }
 
-function supervised_execution(scenes_to_close,margin){
+function supervised_execution(scenes_to_close,margin,sendToServer){
 
 	var result;
 	try{
 
-		result = execute(scenes_to_close,margin);
+		result = execute(scenes_to_close,margin,sendToServer);
 
 	}
 	catch(e){
@@ -396,13 +397,15 @@ function supervised_execution(scenes_to_close,margin){
 
 }
 
-function execute(scenes_to_close,margin){
+function execute(scenes_to_close,margin,sendToServer){
 
 	var episode = getEpisode(getFilename());
 	if(episode == null){
 		return "ERROR: episode not found";
 	}
-	var originalState = activeDocument.activeHistoryState;
+
+	var originalDoc = new File(getFullpath());
+	var originalState = activeDocument.historyStates.length - 1;
 	var scenes = getScenes("CENAS");
 	var saveFile = null;
 	var local_folder = getFullpath().substring(0, getFullpath().lastIndexOf('/')) + "/PUBLISH/";
@@ -431,17 +434,19 @@ function execute(scenes_to_close,margin){
 
 		createCloseUp(scenes[i],margin);
 		saveFile = getOutputPaths(episode);
-		saveDocument(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],getPSFormat()),local_folder + "02_COMP/");
-		saveDocument(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],".png"),local_folder + "02_COMP/");
+		saveDocument(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],getPSFormat()),local_folder + "02_COMP/",sendToServer);
+		saveDocument(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],".png"),local_folder + "02_COMP/",sendToServer);
 		
 		resize(Math.ceil(0.25*getWidth()),Math.ceil(0.25*getHeight()));
-		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".psd"),local_folder + "01_PRE_COMP/");
-		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".png"),local_folder + "01_PRE_COMP/");
+		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".psd"),local_folder + "01_PRE_COMP/",sendToServer);
+		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".png"),local_folder + "01_PRE_COMP/",sendToServer);
 		activeDocument.activeHistoryState = currentState;
 		scenes = getScenes("CENAS");
 	}
 
-	activeDocument.activeHistoryState = originalState;
+	activeDocument.activeHistoryState = activeDocument.historyStates[originalState];
 	app.preferences.rulerUnits = originalUnit;//just to be sure
+	activeDocument.close(SaveOptions.DONOTSAVECHANGES);
+	open(originalDoc);
 	return "Fechamentos criados com sucesso!";
 }
