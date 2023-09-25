@@ -385,6 +385,7 @@ function supervised_execution(scenes_to_close,margin,sendToServer){
 	try{
 
 		result = execute(scenes_to_close,margin,sendToServer);
+		app.displayDialogs = DialogModes.ALL;
 
 	}
 	catch(e){
@@ -392,8 +393,14 @@ function supervised_execution(scenes_to_close,margin,sendToServer){
 		result = e + " at line " + e.line;
 
 	}
-
 	return result;
+
+}
+
+function restartScene(scene){
+
+	activeDocument.close(SaveOptions.DONOTSAVECHANGES);
+	open(scene);
 
 }
 
@@ -415,13 +422,15 @@ function execute(scenes_to_close,margin,sendToServer){
 
 	deleteAllEmptyLayers();
 	var currentState = activeDocument.activeHistoryState;
+	var openOriginalScene = false;
+	app.displayDialogs = DialogModes.NO;
 	for(var i=0;i<scenes.length;i++){
 
 		//if scene is not checked in the interface,ignore it.
 		if(scenes_to_close.indexOf(scenes[i].name) == -1){
 			continue;
 		}
-
+		openOriginalScene = true;
 		deleteOtherGuides(scenes[i].name);
 
 		//remove other layers from the file about to be saved.
@@ -440,13 +449,20 @@ function execute(scenes_to_close,margin,sendToServer){
 		resize(Math.ceil(0.25*getWidth()),Math.ceil(0.25*getHeight()));
 		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".psd"),local_folder + "01_PRE_COMP/",sendToServer);
 		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".png"),local_folder + "01_PRE_COMP/",sendToServer);
-		activeDocument.activeHistoryState = currentState;
+		try{
+			activeDocument.activeHistoryState = currentState;
+		}
+		catch(e){
+			restartScene(originalDoc);
+			openOriginalScene = false;
+		}
 		scenes = getScenes("CENAS");
 	}
 
 	activeDocument.activeHistoryState = activeDocument.historyStates[originalState];
 	app.preferences.rulerUnits = originalUnit;//just to be sure
-	activeDocument.close(SaveOptions.DONOTSAVECHANGES);
-	open(originalDoc);
+	if(openOriginalScene){
+		restartScene(originalDoc);
+	}
 	return "Fechamentos criados com sucesso!";
 }
