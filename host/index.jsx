@@ -325,13 +325,18 @@ function pad(num, size) {
     return num;
 }
 
-function getVersion(basename,saveAt,format){
+function getVersion(basename,saveAt,formats){
 	var f = new Folder(saveAt);
 	var files = f.getFiles (/(psd|psb|png)$/);//returns file object list
 	var version = 1;
 	for(var i = 0;i < files.length;i++){
-		if(files[i].name.indexOf(basename) != -1 && files[i].name.indexOf(format) != -1){
-            version++;
+
+		for(var j = 0; j < formats.length;j++){
+
+			if(files[i].name.indexOf(basename) != -1 && files[i].name.indexOf(formats[j]) != -1){
+				version++;
+			}
+			
 		}
 	}
 	return "v" + pad(version,2);
@@ -339,7 +344,7 @@ function getVersion(basename,saveAt,format){
 
 function generateCloseupName(projCode,episode,scene,saveAt,format){
  	var basename = projCode + "_" + episode + "_" + scene;//LEB_EP000_SC0000 
-	return basename + "_" + getVersion(basename,saveAt,format) + format;//LEB_EPXXX_SCXXXX_vXX.psd
+	return basename + "_" + getVersion(basename,saveAt,[".psd",".psb"]) + format;//LEB_EPXXX_SCXXXX_vXX.psd
 }
 
 function isLayerEmpty(layer_name){
