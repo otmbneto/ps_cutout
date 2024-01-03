@@ -54,12 +54,6 @@ function getArtLayers(layerSetName){
 	});
 }
 
-function HelloWorld(){
-
-	alert("OIII MUNDO");
-
-}
-
 function checkSceneName(scene_name){
 	return /(sc|SC)\d{4}$/.test(scene_name);
 }

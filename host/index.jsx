@@ -312,6 +312,7 @@ function makedirs(folderString){
 function getOutputPaths(episode){
 
 	var root = "//192.168.10.101/projects/195_Papaya/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/07_FECHAMENTO/";
+	//var root = "X:/output/";
 	closeup_comp = root + "02_COMP/";
 	closeup_proxy = root + "01_PRE_COMP/";
 	return [closeup_comp,closeup_proxy];
@@ -356,7 +357,7 @@ function getFrameCount(scene_name){
 }
 
 function getEpisode(s) {
-	var rx = /EP\d{2,3}/g;
+	var rx = /EP\d{3}/g;
 	var arr = s.match(rx);
 	return arr == null ? null : arr[0]; 
 }
