@@ -7,7 +7,7 @@
 #    e-mail: otmbneto@protonmail.com ||      ''             ||                #
 #                                    ||''|,  ||  '||''| .|''||  .|''|,        #
 #    created: 05/05/2023             ||  ||  ||   ||    ||  ||  ||  ||        #
-#    modified: 05/05/2023           .||..|' .||. .||.   `|..||. `|..|'        #
+#    modified: 02/01/2024           .||..|' .||. .||.   `|..||. `|..|'        #
 #                                                                             #
 #############################################################################*/
 
@@ -311,10 +311,9 @@ function makedirs(folderString){
 //TODO: ask for real paths.
 function getOutputPaths(episode){
 
-	var root = "//192.168.10.100/projects/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
-	//var root = "X:/output/127_Lupi_Baduki/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/06_FECHAMENTO/";
-	closeup_comp = root + "02_COMP/"
-	closeup_proxy = root + "01_PRE_COMP/"
+	var root = "//192.168.10.101/projects/195_Papaya/01_EPISODIOS/" + episode +"/02_ASSETS/01_BG/02_POST_BOARD/07_FECHAMENTO/";
+	closeup_comp = root + "02_COMP/";
+	closeup_proxy = root + "01_PRE_COMP/";
 	return [closeup_comp,closeup_proxy];
 	
 }
@@ -343,8 +342,8 @@ function getVersion(basename,saveAt,formats){
 }
 
 function generateCloseupName(projCode,episode,scene,saveAt,format){
- 	var basename = projCode + "_" + episode + "_" + scene;//LEB_EP000_SC0000 
-	return basename + "_" + getVersion(basename,saveAt,[".psd",".psb"]) + format;//LEB_EPXXX_SCXXXX_vXX.psd
+ 	var basename = projCode + "_" + episode + "_" + scene;//PPY_EP00_SC0000 
+	return basename + "_" + getVersion(basename,saveAt,[".psd",".psb"]) + format;//PPY_EPXX_SCXXXX_vXX.psd
 }
 
 function isLayerEmpty(layer_name){
@@ -357,7 +356,7 @@ function getFrameCount(scene_name){
 }
 
 function getEpisode(s) {
-	var rx = /EP\d{3}/g;
+	var rx = /EP\d{2,3}/g;
 	var arr = s.match(rx);
 	return arr == null ? null : arr[0]; 
 }
@@ -408,6 +407,10 @@ function restartScene(scene){
 	open(scene);
 
 }
+//TODO: Implement a way to get project data
+function getProjectCode(){
+	return "PPY";
+}
 
 function execute(scenes_to_close,margin,sendToServer){
 
@@ -448,12 +451,13 @@ function execute(scenes_to_close,margin,sendToServer){
 
 		createCloseUp(scenes[i],margin);
 		saveFile = getOutputPaths(episode);
-		saveDocument(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],getPSFormat()),local_folder + "02_COMP/",sendToServer);
-		saveDocument(saveFile[0] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[0],".png"),local_folder + "02_COMP/",sendToServer);
+		var projCode = getProjectCode();
+		saveDocument(saveFile[0] + generateCloseupName(projCode,episode,scenes[i].name,saveFile[0],getPSFormat()),local_folder + "02_COMP/",sendToServer);
+		saveDocument(saveFile[0] + generateCloseupName(projCode,episode,scenes[i].name,saveFile[0],".png"),local_folder + "02_COMP/",sendToServer);
 		
 		resize(Math.ceil(0.25*getWidth()),Math.ceil(0.25*getHeight()));
-		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".psd"),local_folder + "01_PRE_COMP/",sendToServer);
-		saveDocument(saveFile[1] + generateCloseupName("LEB",episode,scenes[i].name,saveFile[1],".png"),local_folder + "01_PRE_COMP/",sendToServer);
+		saveDocument(saveFile[1] + generateCloseupName(projCode,episode,scenes[i].name,saveFile[1],".psd"),local_folder + "01_PRE_COMP/",sendToServer);
+		saveDocument(saveFile[1] + generateCloseupName(projCode,episode,scenes[i].name,saveFile[1],".png"),local_folder + "01_PRE_COMP/",sendToServer);
 		try{
 			activeDocument.activeHistoryState = currentState;
 		}
